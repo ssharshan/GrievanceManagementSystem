@@ -1,0 +1,78 @@
+Create REST API docs for Department with the following schemas in openAPI 3 spec, having auth using Authorization Header with JWT token. Implement pagination and sorting as well move them to schemas for reusability.
+
+All models in the Grievance Management Service
+Grievance
+    description: A grievance is a complaint.
+    attributes:
+        id (This would be a UUID)
+        title
+        description
+        attachments (This would be an array of file paths)
+        status (Should this be declared as enum or what would be a good way to declare this?)
+        department
+        category
+        comments (This would be an array of comments)
+        resolution
+        resolvedAt
+        resolutionDescription
+        resolvedBy (This would be a foreign key to the User table)
+        createdAt
+        updatedAt
+        updatedBy (This would be a foreign key UUID to the User table)
+        createdBy (This would be a foreign key UUID to the User table)
+        assignedTo (This would be a foreign key UUID to the User table)
+        assignedOn
+        expectedResolutionDate
+
+Department
+    description: A department is a group of people who work together, like a sales department or a human resources department.
+    attributes:
+        id (This would be a UUID)
+        name
+        description
+        categories (This would be an array of categories)
+        grievances (This would be an array of grievances)
+        createdBy (This would be a foreign key UUID to the User table)
+        createdOn
+        updatedBy (This would be a foreign key to the User table)
+        updatedOn
+
+Category
+    description: A category is a group of grievances that are related, such as all grievances about a particular product or service. It could be a subcategory of a department or specific to a department.
+    attributes:
+        id (This would be a UUID)
+        name
+        description
+        department
+        grievances (This would be an array of grievances)
+        createdOn
+        createdBy (This would be a foreign key UUID to the User table)
+        updatedOn
+        updatedBy (This would be a foreign key UUID to the User table)
+
+Comment
+    description: A comment is a note that is added to a grievance.
+    attributes:
+        UUID
+        description
+        grievance
+        attachments (This would be an array of file paths)
+        createdOn
+        createdBy (This would be a foreign key UUID to the User table)
+        updatedOn
+        updatedBy (This would be a foreign key UUID to the User table)
+
+Resolution
+    description: A resolution is a solution to a grievance.
+    attributes:
+        id (This would be a UUID)
+        description
+        grievance
+        attachments (This would be an array of file paths)
+        createdOn
+        createdBy (This would be a foreign key UUID to the User table)
+        updatedOn
+        updatedBy (This would be a foreign key UUID to the User table)
+
+//Generate openAPI 3.0 using above models
+```
