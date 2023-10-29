@@ -346,6 +346,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Category'
+
   /api/categories/{categoryId}:
     parameters:
       - name: categoryId
@@ -384,6 +385,7 @@ paths:
       responses:
         '204':
           description: Category deleted successfully
+
 components:
   securitySchemes:
     JWT:
@@ -413,21 +415,32 @@ components:
       schema:
         type: string
   schemas:
-    Grievance:
+    CommonGetResponse:
       type: object
       properties:
         id:
           type: string
           format: uuid
+        createdOn:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+          format: uuid
+        updatedOn:
+          type: string
+          format: date-time
+        updatedBy:
+          type: string
+          format: uuid
+    Grievance:
+      type: object
+      properties:
         title:
           type: string
         description:
           type: string
         status:
-          type: string
-        department:
-          type: string
-        category:
           type: string
         comments:
           type: array
@@ -439,22 +452,47 @@ components:
             type: string
         resolution:
           $ref: '#/components/schemas/Resolution'
-        createdAt:
-          type: string
-          format: date-time
-        createdBy:
-          type: string
-        updatedAt:
-          type: string
-          format: date-time
-        updatedBy:
-          type: string
       required:
         - title
         - description
-        - status
+
+    CommonGetForAssociations:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    GrievanceCreateOrUpdate:
+      allOf:
+        - $ref: '#/components/schemas/Grievance'
+        - type: object
+          properties:
+            department:
+              type: string
+              format: uuid
+            category:
+              type: string
+              format: uuid
+      required:
+        - title
+        - description
         - department
         - category
+
+    GrievanceResponse:
+      allOf:
+        - $ref: '#/components/schemas/Grievance'
+        - $ref: '#/components/schemas/CommonGetResponse'
+        - type: object
+          properties:
+            department:
+              $ref: '#/components/schemas/CommonGetForAssociations'
+            category:
+              $ref: '#/components/schemas/CommonGetForAssociations'
+
     Department:
       type: object
       properties:
@@ -469,17 +507,21 @@ components:
           type: array
           items:
             type: string
+            format: uuid
         grievances:
           type: array
           items:
             type: string
+            format: uuid
         createdBy:
           type: string
+          format: uuid
         createdOn:
           type: string
           format: date-time
         updatedBy:
           type: string
+          format: uuid
         updatedOn:
           type: string
           format: date-time
@@ -498,6 +540,7 @@ components:
           type: string
         department:
           type: string
+          format: uuid
         grievances:
           type: array
           items:
@@ -508,11 +551,13 @@ components:
           format: date-time
         createdBy:
           type: string
+          format: uuid
         updatedOn:
           type: string
           format: date-time
         updatedBy:
           type: string
+          format: uuid
       required:
         - name
         - department
@@ -526,6 +571,7 @@ components:
           type: string
         grievance:
           type: string
+          format: uuid
         attachments:
           type: array
           items:
@@ -535,11 +581,13 @@ components:
           format: date-time
         createdBy:
           type: string
+          format: uuid
         updatedOn:
           type: string
           format: date-time
         updatedBy:
           type: string
+          format: uuid
       required:
         - description
         - grievance
@@ -564,54 +612,56 @@ components:
           format: date-time
         createdBy:
           type: string
+          format: uuid
         updatedOn:
           type: string
           format: date-time
         updatedBy:
           type: string
+          format: uuid
       required:
         - description
         - grievance
-    DepartmentIdSchema:
-      type: object
-      properties:
-        department_id:
-          type: string
-          description: The ID of the department
-
-    DepartmentSchema:
-      type: object
-      properties:
-        department:
-          type: object
-          properties:
-            department_id:
-              type: string
-              description: The ID of the department
-            department_name:
-              type: string
-              description: The name of the department
-
-    GrievanceCreateSchema:
-      allOf:
-        - $ref: '#/components/schemas/DepartmentIdSchema'
-        - type: object
-          properties:
-            title:
-              type: string
-              description: The title of the grievance
-            description:
-              type: string
-              description: The description of the grievance
-
-    GrievanceResponseSchema:
-      allOf:
-        - $ref: '#/components/schemas/DepartmentSchema'
-        - type: object
-          properties:
-            title:
-              type: string
-              description: The title of the grievance
-            description:
-              type: string
-              description: The description of the grievance
+#    DepartmentIdSchema:
+#      type: object
+#      properties:
+#        department_id:
+#          type: string
+#          description: The ID of the department
+#
+#    DepartmentSchema:
+#      type: object
+#      properties:
+#        department:
+#          type: object
+#          properties:
+#            department_id:
+#              type: string
+#              description: The ID of the department
+#            department_name:
+#              type: string
+#              description: The name of the department
+#
+#    GrievanceCreateSchema:
+#      allOf:
+#        - $ref: '#/components/schemas/DepartmentIdSchema'
+#        - type: object
+#          properties:
+#            title:
+#              type: string
+#              description: The title of the grievance
+#            description:
+#              type: string
+#              description: The description of the grievance
+#
+#    GrievanceResponseSchema:
+#      allOf:
+#        - $ref: '#/components/schemas/DepartmentSchema'
+#        - type: object
+#          properties:
+#            title:
+#              type: string
+#              description: The title of the grievance
+#            description:
+#              type: string
+#              description: The description of the grievance

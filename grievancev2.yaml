@@ -1,0 +1,1017 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/NERELLASRIHARSHA/Grievance/1.0.0
+info:
+  description: This is API documentation for the Grievance Management API. This API
+    allows you to manage grievances.
+  version: "1.0.0"
+  title: Grievance Management API
+  contact:
+    email: nerellasriharsha@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: users
+    description: Secured User-only calls
+
+security:
+  - JWT: []
+
+paths:
+  /api/grievances:
+    get:
+      summary: List grievances
+      tags:
+        - users
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GrievanceResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: No grievances found
+        '403':
+          description: Forbidden
+
+    post:
+      summary: Create a grievance
+      tags:
+        - users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrievanceCreateOrUpdate'
+      responses:
+        '201':
+          description: Grievance created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grievance'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /api/grievances/{grievanceId}:
+    get:
+      summary: Get a specific grievance by ID
+      tags:
+        - users
+      parameters:
+        - name: grievanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrievanceResponse'
+        '404':
+          description: Grievance not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    put:
+      summary: Update a specific grievance by ID
+      tags:
+        - users
+      parameters:
+        - name: grievanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrievanceCreateOrUpdate'
+      responses:
+        '200':
+          description: Grievance updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrievanceResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Grievance not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    delete:
+      summary: Delete a specific grievance by ID
+      tags:
+        - users
+      parameters:
+        - name: grievanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Grievance deleted successfully
+        '404':
+          description: Grievance not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /api/grievances/{grievanceId}/attachments:
+    post:
+      summary: Add attachments to a grievance
+      tags:
+        - users
+      parameters:
+        - name: grievanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                attachment:
+                  type: file
+      responses:
+        '200':
+          description: Attachments added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrievanceResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Grievance not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /api/grievances/{grievanceId}/attachments/{attachmentName}:
+    get:
+      summary: Get an attachment from a grievance
+      tags:
+        - users
+      parameters:
+        - name: grievanceId
+          in: path
+          required: true
+          schema:
+              type: string
+              format: uuid
+        - name: attachmentName
+          in: path
+          required: true
+          schema:
+              type: string
+      responses:
+        '200':
+          description: Attachment retrieved successfully
+          content:
+            application/*:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Grievance or attachment not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    delete:
+      summary: Delete an attachment from a grievance
+      tags:
+        - users
+      parameters:
+        - name: grievanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: attachmentName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Attachment deleted successfully
+        '404':
+          description: Grievance or attachment not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /api/grievances/{grievanceId}/comments:
+    get:
+      summary: Get comments for a grievance
+      tags:
+        - users
+      parameters:
+        - name: grievanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommentResponse'
+        '404':
+          description: Grievance not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+    post:
+      summary: Add a comment to a grievance
+      tags:
+        - users
+      parameters:
+        - name: grievanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreateOrUpdate'
+      responses:
+        '201':
+          description: Comment added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Grievance not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /api/grievances/{grievanceId}/comments/{commentId}/attachments:
+    post:
+      summary: Add attachments to a grievance
+      tags:
+        - users
+      parameters:
+        - name: grievanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: commentId
+          in: path
+          required: true
+          schema:
+              type: string
+              format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                attachment:
+                  type: file
+      responses:
+        '200':
+          description: Attachments successfully added to comment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Grievance not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /api/grievances/{grievanceId}/comments/{commentId}/attachments/{attachmentName}:
+    get:
+      summary: Get an attachment from a grievance
+      tags:
+        - users
+      parameters:
+        - name: grievanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: attachmentName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Attachment retrieved successfully
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Grievance or attachment not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    delete:
+      summary: Delete an attachment from a grievance comment
+      tags:
+          - users
+      parameters:
+        - name: grievanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: commentId
+          in: path
+          required: true
+          schema:
+              type: string
+              format: uuid
+        - name: attachmentName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Attachment deleted successfully from the comment
+        '404':
+          description: Grievance or attachment not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /api/users/{userId}/grievances:
+    get:
+      summary: Get Grievances by User
+      description: Retrieve all grievances created by a specific user.
+      tags:
+        - admins
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GrievanceResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found or no grievances found
+
+  /api/grievances/{grievanceId}/assign:
+    put:
+      summary: Assign Grievance to User
+      description: Assign a specific grievance to a user.
+      tags:
+          - admins
+      parameters:
+        - name: grievanceId
+          in: path
+          description: ID of the grievance to assign
+          required: true
+          schema:
+            type: string
+          example: "12345"
+      requestBody:
+        description: User to assign the grievance to
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                  description: ID of the user to assign the grievance to
+                  example: "67890"
+      responses:
+        '200':
+          description: Grievance assigned successfully
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grievance not found
+
+  /api/departments:
+    get:
+      summary: Get List of Departments
+      tags:
+        - users
+      description: Retrieve a list of departments.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDepartmentGetResponse'
+        '401':
+          description: Unauthorized
+
+
+  /api/admin/departments:
+    get:
+      summary: Get List of Departments
+      description: Retrieve a list of departments.
+      tags:
+        - admins
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminDepartmentGetResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      summary: Create a Department
+      description: Create a new department.
+      tags:
+        - admins
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Department'
+      responses:
+        '201':
+          description: Department created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /api/admin/departments/{id}:
+    get:
+      summary: Get a Department by ID
+      description: Retrieve a specific department by ID.
+      tags:
+          - admins
+      parameters:
+        - name: id
+          in: path
+          description: Department ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "12345"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminDepartmentGetResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Department not found
+    put:
+      summary: Update a Department by ID
+      description: Update an existing department by ID.
+      tags:
+        - admins
+      parameters:
+        - name: id
+          in: path
+          description: Department ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "12345"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Department'
+      responses:
+        '200':
+          description: Department updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Department not found
+    delete:
+      summary: Delete a Department by ID
+      description: Delete a specific department by ID.
+      tags:
+          - admins
+      parameters:
+        - name: id
+          in: path
+          description: Department ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "12345"
+      responses:
+        '204':
+          description: Department deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Department not found
+        '403':
+          description: Forbidden
+
+  /api/departments/{id}/categories:
+    get:
+      summary: Get all categories
+      tags:
+        - users
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - name: id
+          in: path
+          description: Department ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "12345"
+      responses:
+        '200':
+          description: A list of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserCategoryGetResponse'
+
+  /api/admin/departments/{id}/categories:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID of the department to retrieve or update
+        schema:
+          type: string
+    get:
+      summary: Get all categories
+      tags:
+        - admins
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - name: id
+          in: path
+          description: Department ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "12345"
+      responses:
+        '200':
+          description: A list of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserCategoryGetResponse'
+    post:
+      summary: Create a new category
+      tags:
+          - admins
+      requestBody:
+        description: New category data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        '201':
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCategoryGetResponse'
+
+  /api/admin/departments/{id}/categories/{categoryId}:
+    parameters:
+      - name: categoryId
+        in: path
+        required: true
+        description: ID of the category to retrieve or update
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: ID of the department to retrieve or update
+        schema:
+          type: string
+    get:
+      summary: Get a category by ID
+      tags:
+        - admins
+      responses:
+        '200':
+          description: Category details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCategoryGetResponse'
+    put:
+      summary: Update a category by ID
+      tags:
+          - admins
+      requestBody:
+        description: Updated category data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        '200':
+          description: Category updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCategoryGetResponse'
+    delete:
+      summary: Delete a category by ID
+      tags:
+          - admins
+      responses:
+        '204':
+          description: Category deleted successfully
+
+components:
+  securitySchemes:
+    JWT:
+      type: apiKey
+      in: header
+      name: Authorization
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number for pagination
+      required: false
+      schema:
+        type: integer
+    SizeParam:
+      name: size
+      in: query
+      description: Number of items per page
+      required: false
+      schema:
+        type: integer
+    SortParam:
+      name: sort
+      in: query
+      description: Sorting order (e.g., +title or -creationDate)
+      required: false
+      schema:
+        type: string
+  schemas:
+    CommonGetResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        createdOn:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+          format: uuid
+        updatedOn:
+          type: string
+          format: date-time
+        updatedBy:
+          type: string
+          format: uuid
+
+    CommonGetForAssociations:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+
+    Grievance:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+
+
+    GrievanceCreateOrUpdate:
+      allOf:
+        - $ref: '#/components/schemas/Grievance'
+        - type: object
+          properties:
+            department:
+              type: string
+              format: uuid
+            category:
+              type: string
+              format: uuid
+      required:
+        - title
+        - description
+        - department
+        - category
+
+    GrievanceStatus:
+      type: string
+      enum:
+        - OPEN
+        - ASSIGNED
+        - RESOLVED
+        - CLOSED
+        - REJECTED
+
+    Attachments:
+      type: object
+      properties:
+        attachments:
+          type: array
+          items:
+            type: string
+
+    GrievanceResponse:
+      allOf:
+        - $ref: '#/components/schemas/Grievance'
+        - $ref: '#/components/schemas/CommonGetResponse'
+        - $ref: '#/components/schemas/Attachments'
+        - type: object
+          properties:
+            status:
+              $ref: '#/components/schemas/GrievanceStatus'
+            department:
+              $ref: '#/components/schemas/CommonGetForAssociations'
+            category:
+              $ref: '#/components/schemas/CommonGetForAssociations'
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/CommentResponse'
+            assignedTo:
+              type: string
+              format: uuid
+            assignedOn:
+              type: string
+              format: date-time
+            expectedResolutionDate:
+              type: string
+              format: date-time
+            resolvedOn:
+              type: string
+              format: date-time
+      required:
+        - title
+        - description
+        - status
+        - department
+        - category
+        - id
+        - createdOn
+        - createdBy
+        - updatedOn
+        - updatedBy
+
+    CommentCreateOrUpdate:
+      type: object
+      properties:
+        description:
+          type: string
+      required:
+        - description
+
+    CommentResponse:
+      allOf:
+        - $ref: '#/components/schemas/CommonGetResponse'
+        - $ref: '#/components/schemas/CommentCreateOrUpdate'
+        - $ref: '#/components/schemas/Attachments'
+      required:
+        - id
+        - createdOn
+        - createdBy
+        - updatedOn
+        - updatedBy
+
+    Department:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+        - description
+
+    UserDepartmentGetResponse:
+      allOf:
+        - $ref: '#/components/schemas/CommonGetForAssociations'
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommonGetForAssociations'
+      required:
+        - id
+        - name
+        - description
+        - categories
+
+    AdminDepartmentGetResponse:
+      allOf:
+        - $ref: '#/components/schemas/Department'
+        - $ref: '#/components/schemas/CommonGetResponse'
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserCategoryGetResponse'
+        grievances:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrievanceResponse'
+      required:
+        - id
+        - categories
+
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+        - description
+
+    UserCategoryGetResponse:
+      allOf:
+        - $ref: '#/components/schemas/CommonGetForAssociations'
+      type: object
+      required:
+        - id
+        - name
+        - description
+
+    AdminCategoryGetResponse:
+      allOf:
+        - $ref: '#/components/schemas/Category'
+        - $ref: '#/components/schemas/CommonGetResponse'
+      type: object
+      properties:
+        grievances:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrievanceResponse'
+      required:
+        - id
+        - grievances
